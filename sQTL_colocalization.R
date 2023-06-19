@@ -362,7 +362,6 @@ for ( o in 1:nrow(var_mat_tmp) ) {
           # paste("Mean value for SNP ",snps$id," is ", rowMeans(snps[, -1]))
           # paste("Standard deviation for SNP ", snps$id," is ", t(apply(snps[, -1], 1, sd)))
           
-          # MatrixQTLでmQTL-SNPsと発現量が相関する遺伝子を抽出
           write.table(snps, paste0("~/tmp/snps_",lead_variant,"_",stim,"_",disease,"_leafcutter_sqtl.txt"), sep = "\t",quote=FALSE, row.names = FALSE)
           write.table(expr2, paste0("~/tmp/exp_",lead_variant,"_",stim,"_",disease,"_leafcutter_sqtl.txt"), sep = "\t",quote=FALSE, row.names = FALSE)
           write.table(cov, paste0("~/tmp/cov_",lead_variant,"_",stim,"_",disease,"_leafcutter_sqtl.txt"), sep = "\t",quote=FALSE, row.names = FALSE)
@@ -555,7 +554,6 @@ for ( o in 1:nrow(var_mat_tmp) ) {
           # paste("Mean value for SNP ",snps$id," is ", rowMeans(snps[, -1]))
           # paste("Standard deviation for SNP ", snps$id," is ", t(apply(snps[, -1], 1, sd)))
           
-          # MatrixQTLでmQTL-SNPsと発現量が相関する遺伝子を抽出
           write.table(snps, paste0("~/tmp/snps_dice_",lead_variant,"_",stim,"_",disease,"_leafcutter_sqtl.txt"), sep = "\t",quote=FALSE, row.names = FALSE)
           write.table(expr2, paste0("~/tmp/exp_dice_",lead_variant,"_",stim,"_",disease,"_leafcutter_sqtl.txt"), sep = "\t",quote=FALSE, row.names = FALSE)
           write.table(cov, paste0("~/tmp/cov_dice_",lead_variant,"_",stim,"_",disease,"_leafcutter_sqtl.txt"), sep = "\t",quote=FALSE, row.names = FALSE)
