@@ -136,29 +136,6 @@ for (i in 1:length(SUBSET)){
   }
 }
 
-
-
-# ImmVar
-IID_tr_i <- read.table("/data03/inamo/ImmVar/sample_Info.txt",header = TRUE)
-
-# covariate file
-SUBSET <- c("CD4T_Activated","MoDC_unstim","MoDC_FLU","MoDC_IFNb")
-POP = "EUR"
-for (i in 1:length(SUBSET)){
-  for (p in 1:length(POP)){
-    tryCatch({
-      
-      cov = as.data.frame(fread(paste("/data01/ImmVar/inamo/ImmVar/Genotypefiles/Imputed/QC_P3_R20.7_MAF0.05_HWE1E06_nodup_",SUBSET[i],"_",POP[p],".hg38_PC10.txt",sep=""),header = TRUE))
-      cov$SampleID <- str_split(cov$SampleID, pattern = "_", simplify = TRUE)[,ncol(str_split(cov$SampleID, pattern = "_", simplify = TRUE))]
-      colnames(cov) <- gsub("SampleID","id",colnames(cov)%>%gsub("^0_","",.))
-      assign(paste0("cov_",SUBSET[i],"_",POP[p]), cov)
-      
-    }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
-  }
-}
-
-
-
 # DICE
 corres = read.table("/data01/DICE/DICE_DNA_RNAseq_correspondance.txt", header = TRUE)
 
@@ -175,33 +152,6 @@ cov = as.data.frame(fread(paste("/data01/DICE/inamo/Genotypefiles/Imputed/QC_P3_
   dplyr::mutate(id = rownames(.)) %>%
   .[,c("id",as.character(read.table("/data03/inamo/DICE/kallisto/sample_list.txt", header = TRUE)[,1]))]
 assign(paste0("cov_DICE"), cov)
-
-
-
-# GEUV
-IID_tr_g <- 
-  read.table("/data03/inamo/GEUV/all_sample.txt", sep="\t") %>%
-  .[,c("V1","V3")] %>%
-  magrittr::set_colnames(c("IID","stim")) %>%
-  magrittr::set_rownames(.$IID) %>%
-  .[read.table("/data03/inamo/GEUV/all_sample.txt", sep="\t")[,1],] %>%
-  dplyr::mutate(stim = ifelse(grepl("Yoruba", stim), "YRI", "EUR")) %>%
-  .[,c("stim","IID")]
-
-
-# covariate file
-POP = "EUR"
-for (p in 1:length(POP)){
-  tryCatch({
-    
-    cov = as.data.frame(fread(paste("/data03/inamo/GEUV/VCF/GEUVADIS_GRCh38_",POP[p],"_PC10.txt",sep=""),header = TRUE))
-    cov$SampleID <- str_split(cov$SampleID, pattern = "_", simplify = TRUE)[,ncol(str_split(cov$SampleID, pattern = "_", simplify = TRUE))]
-    colnames(cov) <- gsub("SampleID","id",colnames(cov)%>%gsub("^0_","",.))
-    assign(paste0("cov_GEUV_",POP[p]), cov)
-    
-  }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
-}
-
 
 # normalized expression
 isopos_c = fread("/data02/home/juninamo/reference/GENCODE/GRCh38/release_38/leafcutter/isoform_position.txt") %>% 
@@ -321,8 +271,6 @@ ref <- fread(paste0("/data02/home/juninamo/reference/KGP/AF/all_rs_autosome_EUR_
   dplyr::filter(chr_pos %in% gwas$chr_pos)
 
 dir.create(paste0("~/tmp/",disease,"/QTL_peer/splicing/coloc"), showWarnings = F, recursive = T)
-
-# o=1
 
 for ( o in 1:nrow(var_mat_tmp) ) {
   tryCatch({   
@@ -543,7 +491,10 @@ for ( o in 1:nrow(var_mat_tmp) ) {
                          chr = paste0("chr",str_split(snps_i$id, pattern = "_", simplify = TRUE)[,1]),
                          pos = as.integer(str_split(snps_i$id, pattern = "_", simplify = TRUE)[,2]))
     
-    for (stim in c("TFH","TH1","TH17","TH2","TH1-17","TREG_MEMORY","TREG_NAIVE","B_NAIVE","CD4_NAIVE","CD4_N_STIM","CD8_NAIVE","CD8_N_STIM","NONCLASSICAL_MONOCYTES","CLASSICAL_MONOCYTES","NK_CD16POS")){
+    for (stim in c(
+    # "TFH","TH1","TH17","TH2","TH1-17","TREG_MEMORY","TREG_NAIVE","B_NAIVE","CD4_NAIVE","CD4_N_STIM","CD8_NAIVE","CD8_N_STIM","NK_CD16POS",
+    "NONCLASSICAL_MONOCYTES","CLASSICAL_MONOCYTES"
+    )){
       tryCatch({
         
         print(stim)
